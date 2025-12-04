@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -67,7 +66,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: url('https://i.imgur.com/BVUjPYy.jpeg') center/cover no-repeat;
+            background: url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&q=80') center/cover no-repeat;
             z-index: 0;
             border-radius: 36px;
         }
@@ -401,9 +400,9 @@
                         </div>
 
                         <!-- Login Button -->
-                        <a href="https://sroldang.github.io/appnomadi/home.html"><button type="submit" class="btn btn-primary">
+                        <button type="submit" class="btn btn-primary">
                             Iniciar sesión
-                        </button></a>
+                        </button>
 
                         <!-- Google Button -->
                         <button type="button" class="btn btn-google" id="googleBtn">
@@ -446,7 +445,6 @@
             setTimeout(() => {
                 console.log('Login successful');
                 // Redirect to home page
-                alert('¡Login exitoso! Redirigiendo a Home...');
                 window.location.href = 'https://sroldang.github.io/appnomadi/home.html';
             }, 1500);
         });
