@@ -1,1 +1,760 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOMADi - Guardados</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #E9D8A6 0%, #FBFBFB 100%);
+            padding: 20px;
+        }
+
+        /* Phone Frame */
+        .phone-frame {
+            width: 100%;
+            max-width: 360px;
+            height: 780px;
+            background: #1C1C1E;
+            border-radius: 45px;
+            padding: 10px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Notch */
+        .phone-frame::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 140px;
+            height: 28px;
+            background: #1C1C1E;
+            border-radius: 0 0 18px 18px;
+            z-index: 1000;
+        }
+
+        /* Screen */
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: #FBFBFB;
+            border-radius: 36px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 44px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            z-index: 100;
+            background: white;
+        }
+
+        .status-time {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1C1C1E;
+            margin-left: 10px;
+        }
+
+        .status-icons {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .status-icon {
+            width: 18px;
+            height: 12px;
+        }
+
+        /* Background Pattern */
+        .background-pattern {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        /* Main Container */
+        .container {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            padding-bottom: 90px;
+        }
+
+        .container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .container {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Header */
+        .header {
+            padding: 50px 20px 20px;
+            background: white;
+            position: relative;
+        }
+
+        .avatar {
+            position: absolute;
+            top: 50px;
+            right: 20px;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2A6F97, #56C6D9);
+            border: 3px solid white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .header-top {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            color: #2A6F97;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .header-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: #1C1C1E;
+            margin-bottom: 8px;
+        }
+
+        .header-subtitle {
+            font-size: 15px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        /* Filter Tabs */
+        .filter-tabs {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+        }
+
+        .filter-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab {
+            background: white;
+            border: 2px solid #56C6D9;
+            border-radius: 20px;
+            padding: 10px 20px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: #56C6D9;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .tab:hover {
+            background: #E8F8FB;
+        }
+
+        .tab.active {
+            background: #56C6D9;
+            color: white;
+        }
+
+        /* Content Section */
+        .content {
+            padding: 20px;
+        }
+
+        /* Saved Card */
+        .saved-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 14px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .saved-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .saved-card-layout {
+            display: flex;
+            height: 140px;
+            position: relative;
+        }
+
+        .saved-image {
+            width: 45%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .saved-overlay {
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 55%;
+            background: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.85) 30%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .saved-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .saved-location {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: white;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
+        .location-icon {
+            width: 14px;
+            height: 14px;
+        }
+
+        .saved-icon {
+            width: 24px;
+            height: 24px;
+            color: white;
+            margin-bottom: 12px;
+        }
+
+        .saved-btn {
+            background: white;
+            color: #1C1C1E;
+            border: none;
+            border-radius: 10px;
+            padding: 8px 16px;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            align-self: flex-start;
+        }
+
+        .saved-btn:hover {
+            background: #f0f0f0;
+        }
+
+        /* Section Title */
+        .section-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: #1C1C1E;
+            margin-bottom: 16px;
+            margin-top: 8px;
+        }
+
+        /* Lists Grid */
+        .lists-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .list-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .list-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .list-images {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            height: 100px;
+            gap: 2px;
+        }
+
+        .list-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .list-info {
+            padding: 10px;
+        }
+
+        .list-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1C1C1E;
+            line-height: 1.3;
+        }
+
+        /* CTA Button */
+        .cta-button {
+            width: 100%;
+            padding: 16px;
+            background: #2A6F97;
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(42, 111, 151, 0.3);
+            margin-bottom: 20px;
+        }
+
+        .cta-button:hover {
+            background: #1e5570;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(42, 111, 151, 0.4);
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            right: 10px;
+            background: white;
+            border-top: 1px solid #E9D8A6;
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 8px 20px;
+            border-radius: 0 0 36px 36px;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+            z-index: 70;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-item.active .nav-icon {
+            color: #2A6F97;
+        }
+
+        .nav-item.active .nav-label {
+            color: #2A6F97;
+            font-weight: 600;
+        }
+
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            top: -12px;
+            width: 40px;
+            height: 3px;
+            background: #2A6F97;
+            border-radius: 0 0 3px 3px;
+        }
+
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            color: #999;
+            transition: all 0.3s ease;
+        }
+
+        .nav-label {
+            font-size: 11px;
+            color: #999;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .saved-card {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .saved-card:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+
+        .saved-card:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            body {
+                padding: 0;
+            }
+
+            .phone-frame {
+                max-width: 100%;
+                height: 100vh;
+                border-radius: 0;
+                padding: 0;
+                box-shadow: none;
+            }
+
+            .phone-frame::before {
+                display: none;
+            }
+
+            .phone-screen {
+                border-radius: 0;
+            }
+
+            .bottom-nav {
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Phone Frame -->
+    <div class="phone-frame">
+        <div class="phone-screen">
+            <!-- Status Bar -->
+            <div class="status-bar">
+                <div class="status-time">9:41</div>
+                <div class="status-icons">
+                    <svg class="status-icon" viewBox="0 0 24 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="24" height="12" rx="2" fill="#1C1C1E"/>
+                        <rect x="2" y="2" width="20" height="8" rx="1" fill="white"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Background Pattern -->
+            <div class="background-pattern">
+                <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="#E9D8A6" d="M45.7,-55.8C58.9,-45.2,69.2,-30.9,73.8,-14.8C78.4,1.3,77.3,19.2,69.1,33.6C60.9,48,45.6,59,28.9,64.4C12.2,69.8,-6,69.6,-22.4,64.1C-38.8,58.6,-53.4,47.8,-61.9,33.2C-70.4,18.6,-72.8,0.2,-68.9,-16.1C-65,-32.4,-54.8,-46.6,-41.9,-57.3C-29,-68,-13,-75.2,2.3,-77.9C17.6,-80.6,32.5,-66.4,45.7,-55.8Z" transform="translate(100 100)" />
+                </svg>
+            </div>
+
+            <!-- Main Container -->
+            <div class="container">
+                <!-- Header -->
+                <div class="header">
+                    <div class="avatar">
+                        <svg viewBox="0 0 100 100" style="width: 100%; height: 100%;">
+                            <circle cx="50" cy="50" r="50" fill="#2A6F97"/>
+                            <circle cx="50" cy="40" r="18" fill="white"/>
+                            <path d="M20 85 Q20 60 50 60 Q80 60 80 85" fill="white"/>
+                        </svg>
+                    </div>
+
+                    <div class="header-top">NOMADi SAVED</div>
+                    <div class="header-title">Guardados</div>
+                    <div class="header-subtitle">Tu colección de rutas y lugares favoritos</div>
+
+                    <!-- Filter Tabs -->
+                    <div class="filter-tabs">
+                        <button class="tab active">Lugares</button>
+                        <button class="tab">Rutas</button>
+                        <button class="tab">Audioguías</button>
+                        <button class="tab">Listas</button>
+                    </div>
+                </div>
+
+                <!-- Content -->
+                <div class="content">
+                    <!-- Saved Card 1: Coliseo Romano -->
+                    <div class="saved-card">
+                        <div class="saved-card-layout">
+                            <img src="https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=400&h=400&fit=crop" alt="Coliseo Romano" class="saved-image">
+                            <div class="saved-overlay">
+                                <div class="saved-title">Coliseo Romano</div>
+                                <div class="saved-location">
+                                    <svg class="location-icon" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                                    </svg>
+                                    Roma, Italia
+                                </div>
+                                <svg class="saved-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                                <button class="saved-btn">Ver</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Saved Card 2: Ruta Imperial de Roma -->
+                    <div class="saved-card">
+                        <div class="saved-card-layout">
+                            <img src="https://images.unsplash.com/photo-1531572753322-ad063cecc140?w=400&h=400&fit=crop" alt="Ruta Imperial de Roma" class="saved-image">
+                            <div class="saved-overlay">
+                                <div class="saved-title">Ruta Imperial de Roma</div>
+                                <div class="saved-location">
+                                    <svg class="location-icon" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                                    </svg>
+                                    Roma, Italia
+                                </div>
+                                <svg class="saved-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 2L4.5 20.5L12 17L19.5 20.5L12 2Z" stroke="currentColor" stroke-width="2"/>
+                                    <circle cx="8" cy="12" r="2" fill="currentColor"/>
+                                </svg>
+                                <button class="saved-btn">Ver</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Saved Card 3: Historia del Foro Romano -->
+                    <div class="saved-card">
+                        <div class="saved-card-layout">
+                            <img src="https://images.unsplash.com/photo-1531572753322-ad063cecc140?w=400&h=400&fit=crop" alt="Historia del Foro Romano" class="saved-image">
+                            <div class="saved-overlay">
+                                <div class="saved-title">Historia del Foro Romano</div>
+                                <div class="saved-location">
+                                    <svg class="location-icon" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                                    </svg>
+                                    Roma, Italia
+                                </div>
+                                <svg class="saved-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 1C12 1 3 5 3 12C3 15 5 20 12 22C19 20 21 15 21 12C21 5 12 1 12 1Z" stroke="currentColor" stroke-width="2"/>
+                                    <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                                <button class="saved-btn">Ver</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lists Section -->
+                    <div class="section-title">Tus listas</div>
+                    <div class="lists-grid">
+                        <!-- List 1: Viaje a Italia -->
+                        <div class="list-card">
+                            <div class="list-images">
+                                <img src="https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=200&h=200&fit=crop" alt="Italia 1" class="list-image">
+                                <img src="https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=200&h=200&fit=crop" alt="Italia 2" class="list-image">
+                                <img src="https://images.unsplash.com/photo-1531572753322-ad063cecc140?w=200&h=200&fit=crop" alt="Italia 3" class="list-image">
+                                <img src="https://images.unsplash.com/photo-1525874684015-58379d421a52?w=200&h=200&fit=crop" alt="Italia 4" class="list-image">
+                            </div>
+                            <div class="list-info">
+                                <div class="list-title">Viaje a Italia</div>
+                            </div>
+                        </div>
+
+                        <!-- List 2: Lugares románticos -->
+                        <div class="list-card">
+                            <div class="list-images">
+                                <img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=200&h=200&fit=crop" alt="Romántico 1" class="list-image">
+                                <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=200&h=200&fit=crop" alt="Romántico 2" class="list-image">
+                                <img src="https://images.unsplash.com/photo-1499678329028-101435549a4e?w=200&h=200&fit=crop" alt="Romántico 3" class="list-image">
+                                <img src="https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=200&h=200&fit=crop" alt="Romántico 4" class="list-image">
+                            </div>
+                            <div class="list-info">
+                                <div class="list-title">Lugares románticos</div>
+                            </div>
+                        </div>
+
+                        <!-- List 3: Puntos históricos -->
+                        <div class="list-card">
+                            <div class="list-images">
+                                <img src="https://images.unsplash.com/photo-1531572753322-ad063cecc140?w=200&h=200&fit=crop" alt="Histórico 1" class="list-image">
+                                <img src="https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?w=200&h=200&fit=crop" alt="Histórico 2" class="list-image">
+                                <img src="https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=200&h=200&fit=crop" alt="Histórico 3" class="list-image">
+                                <img src="https://images.unsplash.com/photo-1513581166391-887a96ddeafd?w=200&h=200&fit=crop" alt="Histórico 4" class="list-image">
+                            </div>
+                            <div class="list-info">
+                                <div class="list-title">Puntos históricos</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CTA Button -->
+                    <button class="cta-button">Crear nueva lista</button>
+                </div>
+            </div>
+
+            <!-- Bottom Navigation -->
+            <div class="bottom-nav">
+                <div class="nav-item">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill="currentColor"/>
+                    </svg>
+                    <span class="nav-label">Home</span>
+                </div>
+
+                <div class="nav-item">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+                        <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <span class="nav-label">Explorar</span>
+                </div>
+
+                <div class="nav-item">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L4.5 20.5L12 17L19.5 20.5L12 2Z" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    <span class="nav-label">Rutas</span>
+                </div>
+
+                <div class="nav-item active">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2z"/>
+                    </svg>
+                    <span class="nav-label">Guardados</span>
+                </div>
+
+                <div class="nav-item">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                        <circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="2"/>
+                        <path d="M6.5 18.5C6.5 16.5 9 15 12 15C15 15 17.5 16.5 17.5 18.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <span class="nav-label">Perfil</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Filter tabs interaction
+        const tabs = document.querySelectorAll('.tab');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                tabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                console.log('Filter selected:', this.textContent);
+            });
+        });
+
+        // Saved cards
+        const savedCards = document.querySelectorAll('.saved-card');
+        savedCards.forEach(card => {
+            card.addEventListener('click', function() {
+                const title = this.querySelector('.saved-title').textContent;
+                console.log('Saved item clicked:', title);
+            });
+        });
+
+        // Saved buttons
+        const savedBtns = document.querySelectorAll('.saved-btn');
+        savedBtns.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const title = this.closest('.saved-card').querySelector('.saved-title').textContent;
+                alert(`📍 Abriendo ${title}...`);
+            });
+        });
+
+        // List cards
+        const listCards = document.querySelectorAll('.list-card');
+        listCards.forEach(card => {
+            card.addEventListener('click', function() {
+                const title = this.querySelector('.list-title').textContent;
+                console.log('List clicked:', title);
+                alert(`📋 Abriendo lista: ${title}`);
+            });
+        });
+
+        // CTA button
+        const ctaButton = document.querySelector('.cta-button');
+        ctaButton.addEventListener('click', () => {
+            alert('✨ Creando nueva lista...\n\n¿Qué tipo de lista deseas crear?\n• Lugares favoritos\n• Rutas personalizadas\n• Audioguías\n• Lista personalizada');
+        });
+
+        // Navigation
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(item => {
+            item.addEventListener('click', function() {
+                navItems.forEach(nav => nav.classList.remove('active'));
+                this.classList.add('active');
+                
+                const label = this.querySelector('.nav-label').textContent;
+                console.log('Navigating to:', label);
+            });
+        });
+    </script>
+</body>
+</html>
