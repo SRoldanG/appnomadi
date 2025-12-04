@@ -1,1 +1,760 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOMADi - Rutas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #E9D8A6 0%, #FBFBFB 100%);
+            padding: 20px;
+        }
+
+        /* Phone Frame */
+        .phone-frame {
+            width: 100%;
+            max-width: 360px;
+            height: 780px;
+            background: #1C1C1E;
+            border-radius: 45px;
+            padding: 10px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Notch */
+        .phone-frame::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 140px;
+            height: 28px;
+            background: #1C1C1E;
+            border-radius: 0 0 18px 18px;
+            z-index: 1000;
+        }
+
+        /* Screen */
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: #FBFBFB;
+            border-radius: 36px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Background Pattern */
+        .background-pattern {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+
+        /* Main Container */
+        .container {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            padding-bottom: 90px;
+        }
+
+        .container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .container {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Header */
+        .header {
+            padding: 45px 20px 20px;
+            background: white;
+        }
+
+        .header-top {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            color: #2A6F97;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .header-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: #1C1C1E;
+            margin-bottom: 8px;
+        }
+
+        .header-subtitle {
+            font-size: 15px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        /* Search Section */
+        .search-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .city-selector {
+            background: white;
+            border: 2px solid #E9D8A6;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            color: #1C1C1E;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .city-selector:hover {
+            border-color: #56C6D9;
+        }
+
+        .search-box {
+            flex: 1;
+            background: #F5F5F5;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .search-box:focus-within {
+            border-color: #56C6D9;
+            background: white;
+        }
+
+        .search-icon {
+            width: 18px;
+            height: 18px;
+            color: #999;
+        }
+
+        .search-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-size: 14px;
+            color: #1C1C1E;
+            outline: none;
+        }
+
+        .search-input::placeholder {
+            color: #999;
+        }
+
+        /* Filter Chips */
+        .filter-chips {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .chip {
+            background: #E9D8A6;
+            border: none;
+            border-radius: 20px;
+            padding: 10px 18px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1C1C1E;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .chip:hover {
+            background: #d9c896;
+            transform: translateY(-2px);
+        }
+
+        .chip.active {
+            background: #2A6F97;
+            color: white;
+        }
+
+        /* Content Section */
+        .content {
+            padding: 20px;
+        }
+
+        /* Route Card */
+        .route-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .route-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .route-card-horizontal {
+            display: flex;
+            gap: 0;
+        }
+
+        .route-image {
+            width: 140px;
+            height: 140px;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .route-info {
+            padding: 16px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .route-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: #1C1C1E;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .route-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .route-rating {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-weight: 600;
+            color: #1C1C1E;
+        }
+
+        .star-icon {
+            width: 16px;
+            height: 16px;
+            color: #FFC107;
+        }
+
+        .route-icons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .route-icon {
+            width: 20px;
+            height: 20px;
+            color: #2A6F97;
+        }
+
+        .route-btn {
+            width: 100%;
+            background: white;
+            border: 2px solid #2A6F97;
+            color: #2A6F97;
+            border-radius: 10px;
+            padding: 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .route-btn:hover {
+            background: #2A6F97;
+            color: white;
+        }
+
+        /* Section Title */
+        .section-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: #1C1C1E;
+            margin-bottom: 16px;
+            margin-top: 8px;
+        }
+
+        /* Recommendations Grid */
+        .recommendations-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .recommendation-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .recommendation-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .recommendation-image {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+        }
+
+        .recommendation-info {
+            padding: 10px;
+        }
+
+        .recommendation-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #1C1C1E;
+            line-height: 1.3;
+        }
+
+        /* CTA Button */
+        .cta-button {
+            width: 100%;
+            padding: 16px;
+            background: #2A6F97;
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(42, 111, 151, 0.3);
+            margin-bottom: 20px;
+        }
+
+        .cta-button:hover {
+            background: #1e5570;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(42, 111, 151, 0.4);
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            right: 10px;
+            background: white;
+            border-top: 1px solid #E9D8A6;
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 8px 20px;
+            border-radius: 0 0 36px 36px;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+            z-index: 70;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-item.active .nav-icon {
+            color: #2A6F97;
+        }
+
+        .nav-item.active .nav-label {
+            color: #2A6F97;
+            font-weight: 600;
+        }
+
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            top: -12px;
+            width: 40px;
+            height: 3px;
+            background: #2A6F97;
+            border-radius: 0 0 3px 3px;
+        }
+
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            color: #999;
+            transition: all 0.3s ease;
+        }
+
+        .nav-label {
+            font-size: 11px;
+            color: #999;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .route-card {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .route-card:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            body {
+                padding: 0;
+            }
+
+            .phone-frame {
+                max-width: 100%;
+                height: 100vh;
+                border-radius: 0;
+                padding: 0;
+                box-shadow: none;
+            }
+
+            .phone-frame::before {
+                display: none;
+            }
+
+            .phone-screen {
+                border-radius: 0;
+            }
+
+            .bottom-nav {
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Phone Frame -->
+    <div class="phone-frame">
+        <div class="phone-screen">
+            <!-- Background Pattern -->
+            <div class="background-pattern">
+                <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="#E9D8A6" d="M45.7,-55.8C58.9,-45.2,69.2,-30.9,73.8,-14.8C78.4,1.3,77.3,19.2,69.1,33.6C60.9,48,45.6,59,28.9,64.4C12.2,69.8,-6,69.6,-22.4,64.1C-38.8,58.6,-53.4,47.8,-61.9,33.2C-70.4,18.6,-72.8,0.2,-68.9,-16.1C-65,-32.4,-54.8,-46.6,-41.9,-57.3C-29,-68,-13,-75.2,2.3,-77.9C17.6,-80.6,32.5,-66.4,45.7,-55.8Z" transform="translate(100 100)" />
+                </svg>
+            </div>
+
+            <!-- Main Container -->
+            <div class="container">
+                <!-- Header -->
+                <div class="header">
+                    <div class="header-top">NOMADi ROUTES</div>
+                    <div class="header-title">Rutas</div>
+                    <div class="header-subtitle">Explora experiencias diseñadas para ti</div>
+
+                    <!-- Search Section -->
+                    <div class="search-section">
+                        <button class="city-selector">
+                            Roma
+                            <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1 1L6 6L11 1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <div class="search-box">
+                            <svg class="search-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+                                <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                            <input type="text" class="search-input" placeholder="Buscar rutas...">
+                        </div>
+                    </div>
+
+                    <!-- Filter Chips -->
+                    <div class="filter-chips">
+                        <button class="chip active">Históricas</button>
+                        <button class="chip">Gastronómicas</button>
+                        <button class="chip">Culturales</button>
+                        <button class="chip">Miradores</button>
+                        <button class="chip">Express</button>
+                        <button class="chip">Día completo</button>
+                    </div>
+                </div>
+
+                <!-- Content -->
+                <div class="content">
+                    <!-- Route Card 1 -->
+                    <div class="route-card route-card-horizontal">
+                        <img src="https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=400&h=400&fit=crop" alt="Ruta Imperial de Roma" class="route-image">
+                        <div class="route-info">
+                            <div class="route-title">Ruta Imperial de Roma</div>
+                            <div class="route-meta">
+                                <span>2h 30m</span>
+                                <span>|</span>
+                                <span>3.2 km</span>
+                                <div class="route-rating">
+                                    <svg class="star-icon" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                    </svg>
+                                    4.8
+                                </div>
+                            </div>
+                            <div class="route-icons">
+                                <svg class="route-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 2C12 2 3 5 3 12C3 15 5 20 12 22C19 20 21 15 21 12C21 5 12 2 12 2Z" stroke="currentColor" stroke-width="2"/>
+                                    <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                                <svg class="route-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                                <svg class="route-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M2 17L12 22L22 17M2 12L12 17L22 12M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <button class="route-btn">Ver detalles</button>
+                        </div>
+                    </div>
+
+                    <!-- Route Card 2 -->
+                    <div class="route-card route-card-horizontal">
+                        <img src="https://images.unsplash.com/photo-1583422409516-2895a77efded?w=400&h=400&fit=crop" alt="Caminata Gastronómica Trastevere" class="route-image">
+                        <div class="route-info">
+                            <div class="route-title">Caminata Gastronómica Trastevere</div>
+                            <div class="route-meta">
+                                <span>3h 15m</span>
+                                <span>|</span>
+                                <span>4.5 km</span>
+                                <div class="route-rating">
+                                    <svg class="star-icon" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                    </svg>
+                                    4.9
+                                </div>
+                            </div>
+                            <div class="route-icons">
+                                <svg class="route-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 2C12 2 3 5 3 12C3 15 5 20 12 22C19 20 21 15 21 12C21 5 12 2 12 2Z" stroke="currentColor" stroke-width="2"/>
+                                    <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                                <svg class="route-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z" stroke="currentColor" stroke-width="2"/>
+                                    <path d="M6 1v3M10 1v3M14 1v3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                                <svg class="route-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                                    <path d="M12 6v6l4 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                            </div>
+                            <button class="route-btn">Ver detalles</button>
+                        </div>
+                    </div>
+
+                    <!-- Recommendations Section -->
+                    <div class="section-title">Recomendadas para ti</div>
+                    <div class="recommendations-grid">
+                        <div class="recommendation-card">
+                            <img src="https://images.unsplash.com/photo-1529260830199-42c24126f198?w=400&h=400&fit=crop" alt="Ruta express" class="recommendation-image">
+                            <div class="recommendation-info">
+                                <div class="recommendation-title">Ruta express</div>
+                            </div>
+                        </div>
+
+                        <div class="recommendation-card">
+                            <img src="https://images.unsplash.com/photo-1525874684015-58379d421a52?w=400&h=400&fit=crop" alt="Ruta romántica" class="recommendation-image">
+                            <div class="recommendation-info">
+                                <div class="recommendation-title">Ruta romántica</div>
+                            </div>
+                        </div>
+
+                        <div class="recommendation-card">
+                            <img src="https://images.unsplash.com/photo-1534247860156-daa520092ba3?w=400&h=400&fit=crop" alt="Ruta cultural premium" class="recommendation-image">
+                            <div class="recommendation-info">
+                                <div class="recommendation-title">Ruta cultural premium</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CTA Button -->
+                    <button class="cta-button">Crear ruta personalizada</button>
+                </div>
+            </div>
+
+            <!-- Bottom Navigation -->
+            <div class="bottom-nav">
+                <div class="nav-item">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill="currentColor"/>
+                    </svg>
+                    <span class="nav-label">Home</span>
+                </div>
+
+                <div class="nav-item">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+                        <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <span class="nav-label">Explorar</span>
+                </div>
+
+                <div class="nav-item active">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L4.5 20.5L12 17L19.5 20.5L12 2Z" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    <span class="nav-label">Rutas</span>
+                </div>
+
+                <div class="nav-item">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20.84 4.61C19.32 3.09 17.27 2.25 15.05 2.25C12.83 2.25 10.78 3.09 9.26 4.61L8 5.87L6.74 4.61C5.22 3.09 3.17 2.25 0.95 2.25C-1.27 2.25 -3.32 3.09 -4.84 4.61C-7.95 7.72 -7.95 12.78 -4.84 15.89L8 28.73L20.84 15.89C23.95 12.78 23.95 7.72 20.84 4.61Z" transform="translate(4 2)" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    <span class="nav-label">Guardados</span>
+                </div>
+
+                <div class="nav-item">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                        <circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="2"/>
+                        <path d="M6.5 18.5C6.5 16.5 9 15 12 15C15 15 17.5 16.5 17.5 18.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <span class="nav-label">Perfil</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Filter chips interaction
+        const chips = document.querySelectorAll('.chip');
+        chips.forEach(chip => {
+            chip.addEventListener('click', function() {
+                chips.forEach(c => c.classList.remove('active'));
+                this.classList.add('active');
+                console.log('Filter selected:', this.textContent);
+            });
+        });
+
+        // City selector
+        const citySelector = document.querySelector('.city-selector');
+        citySelector.addEventListener('click', () => {
+            alert('📍 Selecciona tu ciudad:\n\n• Roma\n• Lima\n• Cusco\n• Arequipa\n• Bogotá');
+        });
+
+        // Search input
+        const searchInput = document.querySelector('.search-input');
+        searchInput.addEventListener('input', (e) => {
+            console.log('Searching:', e.target.value);
+        });
+
+        // Route cards
+        const routeCards = document.querySelectorAll('.route-card');
+        routeCards.forEach(card => {
+            card.addEventListener('click', function() {
+                const title = this.querySelector('.route-title').textContent;
+                console.log('Route clicked:', title);
+            });
+        });
+
+        // Route buttons
+        const routeBtns = document.querySelectorAll('.route-btn');
+        routeBtns.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                alert('📍 Abriendo detalles de la ruta...');
+            });
+        });
+
+        // Recommendation cards
+        const recommendationCards = document.querySelectorAll('.recommendation-card');
+        recommendationCards.forEach(card => {
+            card.addEventListener('click', function() {
+                const title = this.querySelector('.recommendation-title').textContent;
+                console.log('Recommendation clicked:', title);
+                alert(`🗺️ Abriendo ${title}...`);
+            });
+        });
+
+        // CTA button
+        const ctaButton = document.querySelector('.cta-button');
+        ctaButton.addEventListener('click', () => {
+            alert('✨ Creando ruta personalizada...\n\nSelecciona tus preferencias:\n• Duración\n• Tipo de lugares\n• Dificultad\n• Horario');
+        });
+
+        // Navigation
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(item => {
+            item.addEventListener('click', function() {
+                navItems.forEach(nav => nav.classList.remove('active'));
+                this.classList.add('active');
+                
+                const label = this.querySelector('.nav-label').textContent;
+                console.log('Navigating to:', label);
+            });
+        });
+    </script>
+</body>
+</html>
