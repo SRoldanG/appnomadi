@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOMADi - Perfil</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #E9D8A6 0%, #FBFBFB 100%);
+            padding: 20px;
+        }
+
+        /* Phone Frame */
+        .phone-frame {
+            width: 100%;
+            max-width: 360px;
+            height: 780px;
+            background: #1C1C1E;
+            border-radius: 45px;
+            padding: 10px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Notch */
+        .phone-frame::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 140px;
+            height: 28px;
+            background: #1C1C1E;
+            border-radius: 0 0 18px 18px;
+            z-index: 1000;
+        }
+
+        /* Screen */
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: #FBFBFB;
+            border-radius: 36px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Background Pattern */
+        .background-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 300px;
+            opacity: 0.08;
+            pointer-events: none;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M0,0 L100,0 L100,100 L0,100 Z" fill="none" stroke="%23E9D8A6" stroke-width="0.5"/><path d="M20,20 L80,20 L80,80 L20,80 Z" fill="none" stroke="%23E9D8A6" stroke-width="0.5"/></svg>') repeat;
+        }
+
+        /* Main Container */
+        .container {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            padding-bottom: 90px;
+        }
+
+        .container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .container {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Header */
+        .header {
+            padding: 45px 20px 30px;
+            text-align: center;
+            background: white;
+        }
+
+        .logo-text {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: #2A6F97;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+        }
+
+        .avatar-large {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #2A6F97, #56C6D9);
+            border: 4px solid white;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+
+        .avatar-large img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .user-name {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 26px;
+            font-weight: 700;
+            color: #1C1C1E;
+            margin-bottom: 6px;
+        }
+
+        .user-since {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .user-tier {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .edit-profile-btn {
+            background: #2A6F97;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 32px;
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(42, 111, 151, 0.3);
+        }
+
+        .edit-profile-btn:hover {
+            background: #1e5570;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(42, 111, 151, 0.4);
+        }
+
+        /* Content */
+        .content {
+            padding: 20px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px 12px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .stat-icon {
+            width: 32px;
+            height: 32px;
+            color: #2A6F97;
+            margin: 0 auto 10px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 6px;
+            line-height: 1.3;
+        }
+
+        .stat-value {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: #1C1C1E;
+        }
+
+        /* Section */
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: #1C1C1E;
+            margin-bottom: 16px;
+            letter-spacing: -0.3px;
+        }
+
+        /* Achievements */
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .achievement-card {
+            text-align: center;
+        }
+
+        .achievement-badge {
+            width: 70px;
+            height: 70px;
+            background: #E9D8A6;
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .achievement-icon {
+            width: 36px;
+            height: 36px;
+            color: #2A6F97;
+        }
+
+        .achievement-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: #1C1C1E;
+            line-height: 1.3;
+        }
+
+        /* Preferences Chips */
+        .preferences-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .chip {
+            background: white;
+            border: 2px solid #E9D8A6;
+            border-radius: 20px;
+            padding: 10px 18px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1C1C1E;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .chip.active {
+            background: #E9D8A6;
+            border-color: #E9D8A6;
+        }
+
+        .chip:hover {
+            border-color: #56C6D9;
+        }
+
+        /* Duration Section */
+        .duration-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 12px;
+        }
+
+        /* Settings List */
+        .settings-list {
+            background: white;
+            border-radius: 16px;
+            padding: 8px 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+            margin-bottom: 20px;
+        }
+
+        .setting-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        .setting-item:hover {
+            background: #f9f9f9;
+        }
+
+        .setting-icon {
+            width: 20px;
+            height: 20px;
+            color: #2A6F97;
+        }
+
+        .setting-text {
+            flex: 1;
+            font-size: 15px;
+            font-weight: 500;
+            color: #1C1C1E;
+        }
+
+        .setting-arrow {
+            width: 16px;
+            height: 16px;
+            color: #999;
+        }
+
+        /* Logout Button */
+        .logout-btn {
+            width: 100%;
+            padding: 16px;
+            background: transparent;
+            color: #2A6F97;
+            border: none;
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .logout-btn:hover {
+            color: #1e5570;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            right: 10px;
+            background: white;
+            border-top: 1px solid #E9D8A6;
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 8px 20px;
+            border-radius: 0 0 36px 36px;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+            z-index: 70;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-item.active .nav-icon {
+            color: #2A6F97;
+        }
+
+        .nav-item.active .nav-label {
+            color: #2A6F97;
+            font-weight: 600;
+        }
+
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            top: -12px;
+            width: 40px;
+            height: 3px;
+            background: #2A6F97;
+            border-radius: 0 0 3px 3px;
+        }
+
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            color: #999;
+            transition: all 0.3s ease;
+        }
+
+        .nav-label {
+            font-size: 11px;
+            color: #999;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .stats-grid {
+            animation: fadeInUp 0.6s ease-out 0.1s both;
+        }
+
+        .achievements-grid {
+            animation: fadeInUp 0.6s ease-out 0.2s both;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            body {
+                padding: 0;
+            }
+
+            .phone-frame {
+                max-width: 100%;
+                height: 100vh;
+                border-radius: 0;
+                padding: 0;
+                box-shadow: none;
+            }
+
+            .phone-frame::before {
+                display: none;
+            }
+
+            .phone-screen {
+                border-radius: 0;
+            }
+
+            .bottom-nav {
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Phone Frame -->
+    <div class="phone-frame">
+        <div class="phone-screen">
+            <!-- Background Pattern -->
+            <div class="background-pattern"></div>
+
+            <!-- Main Container -->
+            <div class="container">
+                <!-- Header -->
+                <div class="header">
+                    <div class="logo-text">NOMADi</div>
+                    
+                    <div class="avatar-large">
+                        <svg viewBox="0 0 100 100" style="width: 100%; height: 100%;">
+                            <circle cx="50" cy="50" r="50" fill="#2A6F97"/>
+                            <circle cx="50" cy="40" r="18" fill="white"/>
+                            <path d="M20 85 Q20 60 50 60 Q80 60 80 85" fill="white"/>
+                        </svg>
+                    </div>
+
+                    <div class="user-name">Diego López</div>
+                    <div class="user-since">Viajero desde 2025</div>
+                    <div class="user-tier">Inter Regular</div>
+
+                    <button class="edit-profile-btn">Editar perfil</button>
+                </div>
+
+                <!-- Content -->
+                <div class="content">
+                    <!-- Stats Grid -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <svg class="stat-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z" stroke="currentColor" stroke-width="2"/>
+                                <rect x="8" y="12" width="8" height="6" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            <div class="stat-label">Ciudades exploradas:</div>
+                            <div class="stat-value">12</div>
+                        </div>
+
+                        <div class="stat-card">
+                            <svg class="stat-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2L4.5 20.5L12 17L19.5 20.5L12 2Z" stroke="currentColor" stroke-width="2"/>
+                                <circle cx="8" cy="12" r="2" fill="currentColor"/>
+                                <circle cx="12" cy="8" r="2" fill="currentColor"/>
+                            </svg>
+                            <div class="stat-label">Rutas completadas:</div>
+                            <div class="stat-value">28</div>
+                        </div>
+
+                        <div class="stat-card">
+                            <svg class="stat-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="currentColor"/>
+                            </svg>
+                            <div class="stat-label">Lugares visitados:</div>
+                            <div class="stat-value">74</div>
+                        </div>
+
+                        <div class="stat-card">
+                            <svg class="stat-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 1C12 1 3 5 3 12C3 15 5 20 12 22C19 20 21 15 21 12C21 5 12 1 12 1Z" stroke="currentColor" stroke-width="2"/>
+                                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            <div class="stat-label">Audioguías escuchadas:</div>
+                            <div class="stat-value">23</div>
+                        </div>
+                    </div>
+
+                    <!-- Achievements Section -->
+                    <div class="section">
+                        <div class="section-title">LOGROS</div>
+                        <div class="achievements-grid">
+                            <div class="achievement-card">
+                                <div class="achievement-badge">
+                                    <svg class="achievement-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z" stroke="currentColor" stroke-width="2"/>
+                                        <path d="M9 22V12H15V22" stroke="currentColor" stroke-width="2"/>
+                                    </svg>
+                                </div>
+                                <div class="achievement-name">Explorador histórico</div>
+                            </div>
+
+                            <div class="achievement-card">
+                                <div class="achievement-badge">
+                                    <svg class="achievement-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M3 9L12 2L21 9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                        <path d="M5 8V20H19V8" stroke="currentColor" stroke-width="2"/>
+                                        <circle cx="12" cy="14" r="2" stroke="currentColor" stroke-width="2"/>
+                                    </svg>
+                                </div>
+                                <div class="achievement-name">Cazador de miradores</div>
+                            </div>
+
+                            <div class="achievement-card">
+                                <div class="achievement-badge">
+                                    <svg class="achievement-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                                        <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" stroke="currentColor" stroke-width="2"/>
+                                    </svg>
+                                </div>
+                                <div class="achievement-name">Viajero global</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Travel Preferences -->
+                    <div class="section">
+                        <div class="section-title">PREFERENCIAS DE VIAJE</div>
+                        <div class="preferences-chips">
+                            <button class="chip active">Historia</button>
+                            <button class="chip">Gastronomía</button>
+                            <button class="chip">Cultura</button>
+                            <button class="chip">Naturaleza</button>
+                            <button class="chip">Miradores</button>
+                            <button class="chip">Arquitectura</button>
+                        </div>
+                    </div>
+
+                    <!-- Duration Preference -->
+                    <div class="section">
+                        <div class="duration-label">Duración favorita</div>
+                        <div class="preferences-chips">
+                            <button class="chip active">Express</button>
+                            <button class="chip">Media jornada</button>
+                            <button class="chip">Día completo</button>
+                        </div>
+                    </div>
+
+                    <!-- Settings -->
+                    <div class="section">
+                        <div class="section-title">AJUSTES</div>
+                        <div class="settings-list">
+                            <div class="setting-item">
+                                <svg class="setting-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                                <span class="setting-text">Editar perfil</span>
+                            </div>
+
+                            <div class="setting-item">
+                                <svg class="setting-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" stroke="currentColor" stroke-width="2"/>
+                                    <path d="M2 12h20" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                                <span class="setting-text">Idioma y región</span>
+                            </div>
+
+                            <div class="setting-item">
+                                <svg class="setting-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                <span class="setting-text">Notificaciones</span>
+                            </div>
+
+                            <div class="setting-item">
+                                <svg class="setting-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" stroke-width="2"/>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                                <span class="setting-text">Privacidad y permisos</span>
+                            </div>
+                        </div>
+
+                        <div class="settings-list">
+                            <div class="setting-item">
+                                <svg class="setting-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                <span class="setting-text">Descargas offline</span>
+                            </div>
+
+                            <div class="setting-item">
+                                <svg class="setting-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                                    <path d="M12 1v6m0 6v6M1 12h6m6 0h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                                <span class="setting-text">Tema claro/oscuro</span>
+                            </div>
+
+                            <div class="setting-item">
+                                <svg class="setting-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2"/>
+                                    <path d="M14 2v6h6M16 13H8m8 4H8m2-8H8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                                <span class="setting-text">Términos y condiciones</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Logout Button -->
+                    <button class="logout-btn">Cerrar sesión</button>
+                </div>
+            </div>
+
+            <!-- Bottom Navigation -->
+            <div class="bottom-nav">
+                <div class="nav-item">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill="currentColor"/>
+                    </svg>
+                    <span class="nav-label">Home</span>
+                </div>
+
+                <div class="nav-item">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+                        <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <span class="nav-label">Explorar</span>
+                </div>
+
+                <div class="nav-item">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L4.5 20.5L12 17L19.5 20.5L12 2Z" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    <span class="nav-label">Rutas</span>
+                </div>
+
+                <div class="nav-item">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    <span class="nav-label">Guardados</span>
+                </div>
+
+                <div class="nav-item active">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="10"/>
+                        <circle cx="12" cy="10" r="3" fill="white"/>
+                        <path d="M6.5 18.5C6.5 16.5 9 15 12 15C15 15 17.5 16.5 17.5 18.5" fill="white"/>
+                    </svg>
+                    <span class="nav-label">Perfil</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Edit profile button
+        const editProfileBtn = document.querySelector('.edit-profile-btn');
+        editProfileBtn.addEventListener('click', () => {
+            alert('✏️ Editar perfil\n\n• Cambiar foto\n• Actualizar información\n• Modificar preferencias');
+        });
+
+        // Preference chips
+        const chips = document.querySelectorAll('.chip');
+        chips.forEach(chip => {
+            chip.addEventListener('click', function() {
+                const parent = this.parentElement;
+                const siblings = parent.querySelectorAll('.chip');
+                siblings.forEach(s => s.classList.remove('active'));
+                this.classList.add('active');
+                console.log('Preference selected:', this.textContent);
+            });
+        });
+
+        // Settings items
+        const settingItems = document.querySelectorAll('.setting-item');
+        settingItems.forEach(item => {
+            item.addEventListener('click', function() {
+                const text = this.querySelector('.setting-text').textContent;
+                console.log('Setting clicked:', text);
+                alert(`⚙️ ${text}`);
+            });
+        });
+
+        // Logout button
+        const logoutBtn = document.querySelector('.logout-btn');
+        logoutBtn.addEventListener('click', () => {
+            if (confirm('¿Estás seguro que deseas cerrar sesión?')) {
+                alert('👋 Cerrando sesión...\n\n¡Hasta pronto, Diego!');
+                // Here you would implement actual logout logic
+            }
+        });
+
+        // Navigation
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(item => {
+            item.addEventListener('click', function() {
+                navItems.forEach(nav => nav.classList.remove('active'));
+                this.classList.add('active');
+                
+                const label = this.querySelector('.nav-label').textContent;
+                console.log('Navigating to:', label);
+            });
+        });
+    </script>
+</body>
+</html>
