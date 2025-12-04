@@ -1,1 +1,790 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOMADi - Vista AR</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #E9D8A6 0%, #FBFBFB 100%);
+            padding: 20px;
+        }
+
+        /* Phone Frame */
+        .phone-frame {
+            width: 100%;
+            max-width: 360px;
+            height: 780px;
+            background: #1C1C1E;
+            border-radius: 45px;
+            padding: 10px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Notch */
+        .phone-frame::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 140px;
+            height: 28px;
+            background: #1C1C1E;
+            border-radius: 0 0 18px 18px;
+            z-index: 1000;
+        }
+
+        /* Screen */
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: #87CEEB;
+            border-radius: 36px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* AR Camera View */
+        .ar-view {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background: url('https://images.pexels.com/photos/1797161/pexels-photo-1797161.jpeg?_gl=1*1b8qsmk*_ga*NjE4NzgzNDM0LjE3NjQ4MTUwMDA.*_ga_8JE65Q40S6*czE3NjQ4MTQ5OTkkbzEkZzAkdDE3NjQ4MTQ5OTkkajYwJGwwJGgw') center/cover no-repeat;
+        }
+
+        /* Top Search Bar */
+        .search-bar {
+            position: absolute;
+            top: 45px;
+            left: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            gap: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            z-index: 50;
+        }
+
+        .search-icon {
+            width: 20px;
+            height: 20px;
+            color: #666;
+        }
+
+        .search-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-size: 15px;
+            color: #1C1C1E;
+            outline: none;
+        }
+
+        .filter-icon {
+            width: 24px;
+            height: 24px;
+            color: #2A6F97;
+            cursor: pointer;
+        }
+
+        /* AR Path - Flechas 3D en Sky Turquoise */
+        .ar-path {
+            position: absolute;
+            bottom: 160px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            pointer-events: none;
+        }
+
+        .arrow-3d {
+            width: 80px;
+            height: 60px;
+            position: relative;
+            animation: arrowFloat 2s ease-in-out infinite;
+        }
+
+        .arrow-3d:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+
+        .arrow-3d:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+
+        /* Arrow shape using CSS */
+        .arrow-top {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 40px solid transparent;
+            border-right: 40px solid transparent;
+            border-bottom: 30px solid #56C6D9;
+            filter: drop-shadow(0 4px 10px rgba(86, 198, 217, 0.4));
+        }
+
+        .arrow-bottom {
+            position: absolute;
+            top: 25px;
+            left: 15px;
+            width: 50px;
+            height: 35px;
+            background: linear-gradient(135deg, #56C6D9 0%, #4AB8CC 100%);
+            border-radius: 4px;
+            filter: drop-shadow(0 4px 10px rgba(86, 198, 217, 0.4));
+        }
+
+        /* Path lines */
+        .path-line {
+            position: absolute;
+            bottom: 150px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 400px;
+            background: linear-gradient(180deg, transparent 0%, #56C6D9 30%, #56C6D9 100%);
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .path-line-left {
+            left: calc(50% - 100px);
+        }
+
+        .path-line-right {
+            left: calc(50% + 100px);
+        }
+
+        /* AR Labels - Floating tags */
+        .ar-label {
+            position: absolute;
+            background: rgba(173, 216, 230, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: labelFloat 3s ease-in-out infinite;
+        }
+
+        .ar-label:hover {
+            transform: scale(1.05);
+            background: rgba(173, 216, 230, 1);
+        }
+
+        .label-coliseo {
+            top: 120px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .label-historia {
+            top: 280px;
+            left: 30px;
+            animation-delay: 0.5s;
+        }
+
+        .label-punto {
+            top: 240px;
+            right: 30px;
+            animation-delay: 1s;
+        }
+
+        .label-audio {
+            top: 380px;
+            right: 40px;
+            animation-delay: 1.5s;
+        }
+
+        .label-icon {
+            width: 20px;
+            height: 20px;
+            color: #2A6F97;
+        }
+
+        .label-text {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1C1C1E;
+        }
+
+        .label-distance {
+            font-size: 11px;
+            color: #666;
+        }
+
+        /* Bottom Controls */
+        .bottom-controls {
+            position: absolute;
+            bottom: 90px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 60;
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .control-btn {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: none;
+            border-radius: 16px;
+            padding: 12px 24px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1C1C1E;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-btn {
+            width: 100%;
+            background: #2A6F97;
+            color: white;
+            padding: 16px;
+            border-radius: 16px;
+            font-size: 16px;
+        }
+
+        .nav-btn:hover {
+            background: #1e5570;
+        }
+
+        /* Historia Imperial Popup */
+        .popup-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .popup-overlay.active {
+            display: flex;
+        }
+
+        .popup-card {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            margin: 0 30px;
+            max-width: 300px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.4s ease;
+        }
+
+        .popup-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .popup-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #2A6F97, #56C6D9);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .popup-icon svg {
+            width: 24px;
+            height: 24px;
+            color: white;
+        }
+
+        .popup-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: #1C1C1E;
+        }
+
+        .popup-subtitle {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 12px;
+        }
+
+        .popup-description {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #333;
+            margin-bottom: 16px;
+        }
+
+        .popup-image {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+
+        .popup-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .popup-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .popup-btn-primary {
+            background: #2A6F97;
+            color: white;
+        }
+
+        .popup-btn-primary:hover {
+            background: #1e5570;
+        }
+
+        .popup-btn-secondary {
+            background: #E9D8A6;
+            color: #1C1C1E;
+        }
+
+        .popup-btn-secondary:hover {
+            background: #d9c896;
+        }
+
+        .popup-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 32px;
+            height: 32px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .popup-close:hover {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            right: 10px;
+            background: white;
+            border-top: 1px solid #E9D8A6;
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 8px 20px;
+            border-radius: 0 0 36px 36px;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+            z-index: 70;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item.active .nav-icon {
+            color: #2A6F97;
+        }
+
+        .nav-item.active .nav-label {
+            color: #2A6F97;
+            font-weight: 600;
+        }
+
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            color: #999;
+            transition: all 0.3s ease;
+        }
+
+        .nav-label {
+            font-size: 11px;
+            color: #999;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        /* Animations */
+        @keyframes arrowFloat {
+            0%, 100% {
+                transform: translateY(0px);
+                opacity: 1;
+            }
+            50% {
+                transform: translateY(-10px);
+                opacity: 0.7;
+            }
+        }
+
+        @keyframes labelFloat {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            body {
+                padding: 0;
+            }
+
+            .phone-frame {
+                max-width: 100%;
+                height: 100vh;
+                border-radius: 0;
+                padding: 0;
+                box-shadow: none;
+            }
+
+            .phone-frame::before {
+                display: none;
+            }
+
+            .phone-screen {
+                border-radius: 0;
+            }
+
+            .bottom-nav {
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Phone Frame -->
+    <div class="phone-frame">
+        <div class="phone-screen">
+            <!-- AR Camera View -->
+            <div class="ar-view">
+                <!-- Search Bar -->
+                <div class="search-bar">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+                        <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <input type="text" class="search-input" value="Coliseo Romano, Roma" readonly>
+                    <svg class="filter-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <line x1="4" y1="6" x2="20" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <line x1="4" y1="12" x2="20" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <line x1="4" y1="18" x2="20" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <circle cx="8" cy="6" r="2" fill="#2A6F97"/>
+                        <circle cx="16" cy="12" r="2" fill="#2A6F97"/>
+                        <circle cx="12" cy="18" r="2" fill="#2A6F97"/>
+                    </svg>
+                </div>
+
+                <!-- AR Path Lines -->
+                <div class="path-line path-line-left"></div>
+                <div class="path-line"></div>
+                <div class="path-line path-line-right"></div>
+
+                <!-- 3D Arrows -->
+                <div class="ar-path">
+                    <div class="arrow-3d">
+                        <div class="arrow-top"></div>
+                        <div class="arrow-bottom"></div>
+                    </div>
+                    <div class="arrow-3d">
+                        <div class="arrow-top"></div>
+                        <div class="arrow-bottom"></div>
+                    </div>
+                    <div class="arrow-3d">
+                        <div class="arrow-top"></div>
+                        <div class="arrow-bottom"></div>
+                    </div>
+                </div>
+
+                <!-- AR Labels -->
+                <div class="ar-label label-coliseo">
+                    <svg class="label-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z" stroke="currentColor" stroke-width="2"/>
+                        <path d="M9 22V12H15V22" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    <div>
+                        <div class="label-text">Coliseo Romano</div>
+                        <div class="label-distance">250m</div>
+                    </div>
+                </div>
+
+                <div class="ar-label label-historia" id="historiaBtn">
+                    <svg class="label-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4 19.5C4 18.1 5.1 17 6.5 17H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M6.5 2H20V22H6.5C5.1 22 4 20.9 4 19.5V4.5C4 3.1 5.1 2 6.5 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <div class="label-text">Historia Imperial</div>
+                </div>
+
+                <div class="ar-label label-punto">
+                    <svg class="label-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                        <path d="M12 3C16.97 3 21 7.03 21 12C21 16.97 16.97 21 12 21C7.03 21 3 16.97 3 12C3 7.03 7.03 3 12 3Z" stroke="currentColor" stroke-width="2"/>
+                        <path d="M12 1V3M12 21V23M23 12H21M3 12H1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <div class="label-text">Punto de interés</div>
+                </div>
+
+                <div class="ar-label label-audio">
+                    <svg class="label-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 1C12 1 3 5 3 12C3 15 5 20 12 22C19 20 21 15 21 12C21 5 12 1 12 1Z" stroke="currentColor" stroke-width="2"/>
+                        <path d="M9 11L10 12L14 9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <div class="label-text">Audioguía disponible</div>
+                </div>
+
+                <!-- Bottom Controls -->
+                <div class="bottom-controls">
+                    <div class="control-buttons">
+                        <button class="control-btn">Audioguía</button>
+                        <button class="control-btn">Ver detalles</button>
+                    </div>
+                    <button class="control-btn nav-btn">Iniciar navegación</button>
+                </div>
+
+                <!-- Historia Imperial Popup -->
+                <div class="popup-overlay" id="popupOverlay">
+                    <div class="popup-card">
+                        <button class="popup-close" id="closePopup">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M18 6L6 18M6 6L18 18" stroke="#1C1C1E" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </button>
+
+                        <div class="popup-header">
+                            <div class="popup-icon">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M4 19.5C4 18.1 5.1 17 6.5 17H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                    <path d="M6.5 2H20V22H6.5C5.1 22 4 20.9 4 19.5V4.5C4 3.1 5.1 2 6.5 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="popup-title">Historia Imperial</div>
+                                <div class="popup-subtitle">Descubre el origen y expansión del Imperio Romano</div>
+                            </div>
+                        </div>
+
+                        <img src="https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=600&h=400&fit=crop" alt="Coliseo Romano" class="popup-image">
+
+                        <p class="popup-description">
+                            El Coliseo simboliza el poder imperial. Construido en el siglo I, albergó juegos, batallas y celebraciones. Con capacidad para 50,000 espectadores, representa la grandeza arquitectónica romana.
+                        </p>
+
+                        <div class="popup-buttons">
+                            <button class="popup-btn popup-btn-primary" id="audioBtn">Escuchar audioguía</button>
+                            <button class="popup-btn popup-btn-secondary" id="detailsBtn">Ver detalles completos</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Navigation -->
+            <div class="bottom-nav">
+                <div class="nav-item">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill="currentColor"/>
+                    </svg>
+                    <span class="nav-label">Home</span>
+                </div>
+
+                <div class="nav-item active">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+                        <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <span class="nav-label">Explorar</span>
+                </div>
+
+                <div class="nav-item">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L4.5 20.5L12 17L19.5 20.5L12 2Z" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    <span class="nav-label">Rutas</span>
+                </div>
+
+                <div class="nav-item">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20.84 4.61C19.32 3.09 17.27 2.25 15.05 2.25C12.83 2.25 10.78 3.09 9.26 4.61L8 5.87L6.74 4.61C5.22 3.09 3.17 2.25 0.95 2.25C-1.27 2.25 -3.32 3.09 -4.84 4.61C-7.95 7.72 -7.95 12.78 -4.84 15.89L8 28.73L20.84 15.89C23.95 12.78 23.95 7.72 20.84 4.61Z" transform="translate(4 2)" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    <span class="nav-label">Guardados</span>
+                </div>
+
+                <div class="nav-item">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                        <circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="2"/>
+                        <path d="M6.5 18.5C6.5 16.5 9 15 12 15C15 15 17.5 16.5 17.5 18.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <span class="nav-label">Perfil</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Historia Imperial Popup
+        const historiaBtn = document.getElementById('historiaBtn');
+        const popupOverlay = document.getElementById('popupOverlay');
+        const closePopup = document.getElementById('closePopup');
+        const audioBtn = document.getElementById('audioBtn');
+        const detailsBtn = document.getElementById('detailsBtn');
+
+        historiaBtn.addEventListener('click', () => {
+            popupOverlay.classList.add('active');
+        });
+
+        closePopup.addEventListener('click', () => {
+            popupOverlay.classList.remove('active');
+        });
+
+        popupOverlay.addEventListener('click', (e) => {
+            if (e.target === popupOverlay) {
+                popupOverlay.classList.remove('active');
+            }
+        });
+
+        audioBtn.addEventListener('click', () => {
+            console.log('Playing audioguía...');
+            alert('🎧 Reproduciendo audioguía: Historia Imperial del Coliseo Romano');
+        });
+
+        detailsBtn.addEventListener('click', () => {
+            console.log('Opening details...');
+            alert('📖 Abriendo detalles completos...');
+            popupOverlay.classList.remove('active');
+        });
+
+        // Navigation
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(item => {
+            item.addEventListener('click', function() {
+                navItems.forEach(nav => nav.classList.remove('active'));
+                this.classList.add('active');
+                
+                const label = this.querySelector('.nav-label').textContent;
+                console.log('Navigating to:', label);
+            });
+        });
+
+        // Control buttons
+        const controlButtons = document.querySelectorAll('.control-btn');
+        controlButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                console.log('Action:', this.textContent);
+                if (this.textContent === 'Iniciar navegación') {
+                    alert('🧭 Iniciando navegación AR al Coliseo Romano...');
+                } else if (this.textContent === 'Audioguía') {
+                    alert('🎧 Iniciando audioguía...');
+                } else if (this.textContent === 'Ver detalles') {
+                    alert('📍 Mostrando detalles del punto de interés...');
+                }
+            });
+        });
+
+        // AR Labels interaction
+        const arLabels = document.querySelectorAll('.ar-label');
+        arLabels.forEach(label => {
+            label.addEventListener('click', function() {
+                if (this.id !== 'historiaBtn') {
+                    const text = this.querySelector('.label-text').textContent;
+                    console.log('Label clicked:', text);
+                    alert(`📍 ${text}`);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
